@@ -117,11 +117,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = (
+# Static files configuration
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/yUKi030215/fireApp/FireApp/projectsite/staticfiles'
+STATICFILES_DIRS = [
     BASE_DIR / 'static',
-)
+]
+
+# Special handling for PythonAnywhere
+if 'yUKi030215.pythonanywhere.com' in ALLOWED_HOSTS:
+    STATIC_ROOT = '/home/yUKi030215/fireApp/FireApp/projectsite/staticfiles'
+    STATICFILES_DIRS = [
+        '/home/yUKi030215/fireApp/FireApp/projectsite/static',
+    ]
 
 
 # Default primary key field type
