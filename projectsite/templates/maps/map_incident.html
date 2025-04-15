@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Fire Incidents</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="#">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Maps</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Fire Incidents</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Fire Incidents Map</div>
+                </div>
+                <div class="card-body">
+                    <div id="map" style="height: 600px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<script>
+        var incidents = JSON.parse('{{ incidents|escapejs }}');
+        
+        var map = L.map('map').setView([9.7407, 118.7479], 13);  // Puerto Princesa City coordinates
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+    // Custom fire icon
+    var fireIcon = L.icon({
+        iconUrl: "{% static 'img/fire-icon.png' %}",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+    });
+
+    incidents.forEach(function(incident) {
+        L.marker([incident.latitude, incident.longitude], {icon: fireIcon})
+            .addTo(map)
+            .bindPopup(
+                '<strong>Location:</strong> ' + incident.location + '<br>' +
+                '<strong>Severity:</strong> ' + incident.severity_level + '<br>' +
+                '<strong>Date:</strong> ' + incident.date + '<br>' +
+                '<strong>Description:</strong> ' + incident.description
+            );
+    });
+</script>
+{% endblock %}
