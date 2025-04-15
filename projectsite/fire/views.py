@@ -1,5 +1,4 @@
 from itertools import count
-from typing import override
 from django.db.models.fields import return_None
 from django.shortcuts import render
 from django.views.generic.list import ListView
