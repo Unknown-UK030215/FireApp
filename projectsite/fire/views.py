@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 from datetime import datetime
+import json
 
 
 class HomePageView(ListView):
@@ -108,3 +109,33 @@ def monthly_incidents(request):
         data['values'][month_index] = item['count']
     
     return JsonResponse(data)
+
+
+def map_incident(request):
+    incidents = Incident.objects.select_related('location').values(
+        'location__name',
+        'severity_level', 
+        'date_time',
+        'description', 
+        'location__latitude',
+        'location__longitude'
+    ).order_by('-date_time')
+    
+    incidents_list = []
+    for incident in incidents:
+        if incident['location__latitude'] and incident['location__longitude']:
+            incident_dict = {
+                'location': incident['location__name'],
+                'severity_level': incident['severity_level'],
+                'date': incident['date_time'].strftime('%Y-%m-%d') if incident['date_time'] else '',
+                'description': incident['description'],
+                'latitude': float(incident['location__latitude']),
+                'longitude': float(incident['location__longitude'])
+            }
+            incidents_list.append(incident_dict)
+
+    context = {
+        'incidents': json.dumps(incidents_list),
+        'title': 'Fire Incidents Map'
+    }
+    return render(request, 'maps/map_incident.html', context)

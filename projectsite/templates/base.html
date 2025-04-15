@@ -160,26 +160,26 @@
               
               
               <li class="nav-item">
-                <a data-toggle="collapse" href="#maps">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <p>Maps</p>
-                  <span class="caret"></span>
+                <a data-toggle="collapse" href="#maps" class="{% if 'maps' in request.path %}active{% endif %}">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Maps</p>
+                    <span class="caret"></span>
                 </a>
-                <div class="collapse" id="maps">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{% url 'map-station' %}">
-                        <span class="sub-item">Fire Stations</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="maps/jqvmap.html">
-                        <span class="sub-item">Fire Incidents</span>
-                      </a>
-                    </li>
-                  </ul>
+                <div class="collapse {% if 'maps' in request.path %}show{% endif %}" id="maps">
+                    <ul class="nav nav-collapse">
+                        <li>
+                            <a href="{% url 'map-station' %}" class="{% if request.resolver_match.url_name == 'map-station' %}active{% endif %}">
+                                <span class="sub-item">Fire Stations</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'fire_incidents_map' %}" class="{% if request.resolver_match.url_name == 'fire_incidents_map' %}active{% endif %}">
+                                <span class="sub-item">Fire Incidents</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-              </li>
+            </li>
               <li class="nav-item">
                 <a data-toggle="collapse" href="#charts">
                   <i class="far fa-chart-bar"></i>
