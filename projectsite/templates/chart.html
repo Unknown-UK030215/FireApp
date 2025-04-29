@@ -121,7 +121,7 @@
 <script>
     var lineChart = document.getElementById("lineChart").getContext('2d'),
         barChart = document.getElementById("barChart").getContext('2d'),
-        // pieChart = document.getElementById("pieChart").getContext('2d'),
+        pieChart = document.getElementById("pieChart").getContext('2d'),
         doughnutChart = document.getElementById("doughnutChart").getContext('2d'),
         radarChart = document.getElementById("radarChart").getContext('2d'),
         bubbleChart = document.getElementById("bubbleChart").getContext('2d'),
@@ -199,42 +199,88 @@
             },
         },
     });
-    
-    // var myPieChart = new Chart(pieChart, {
-    //     type: 'pie',
-    //     data: {
-    //       datasets: [
-    //         {
-    //           data: [50, 35, 15],
-    //           backgroundColor: ["#1d7af3", "#f3545d", "#daf4b"],
-    //           borderWidth: 0,
-    //         },
-    //       ],
-    //       labels: ["New Visitors", "Subscribers", "Active Users"],
-    //     },
-    //     options: {
-    //       responsive: true,
-    //       maintainAspectRatio: false,
-    //       legend: {
-    //         position: 'bottom',
-    //         labels: {
-    //             fontColor: "rgb(154, 154 ,154)",
-    //             fontSize: 11,
-    //             usePointStyle: true,
-    //             padding: 20,
-    //         },
-    //       },
-    //       pieceLabel: {
-    //         render: 'percentage',
-    //         fontColor: "white",
-    //         fontSize: 14,
-    //       },
-    //       tooltips: false,
-    //       layout: {
-    //         padding: {left: 20, right: 20, top: 20, bottom: 20},
-    //       },
-    //     },
 
+    var myPieChart = new Chart(pieChart, { 
+        type: 'pie', 
+        data: { 
+            datasets: [ 
+                { 
+                    data: [50, 35, 15], 
+                    backgroundColor: ["#1d7af3", "#f3545d", "#fdaf4b"], 
+                    borderWidth: 0, 
+                }, 
+            ], 
+            labels: ["New Visitors", "Subscribers", "Active Users"], 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            legend: { 
+                position: 'bottom', 
+                labels: { 
+                    fontColor: "rgb(154, 154, 154)", 
+                    fontSize: 11, 
+                    usePointStyle: true, 
+                    padding: 20, 
+                }, 
+            }, 
+            pieceLabel: { 
+                render: 'percentage', 
+                fontColor: "white", 
+                fontSize: 14, 
+            }, 
+            tooltips: false, 
+            layout: { 
+                padding: {left: 20, right: 20, top: 20, bottom: 20}, 
+            }, 
+        }, 
+    }); 
+    
+    // var myDoughnutChart = new Chart(doughnutChart, { 
+    //     type: 'doughnut', 
+    //     data: { 
+    //       datasets: [ 
+    //         { 
+    //           data: [50, 35, 15], 
+    //           backgroundColor: ["#1d7af3", "#f3545d", "#fdaf4b"], 
+    //           borderWidth: 0, 
+    //         }, 
+    //       ], 
+    //       labels: ["New Visitors", "Subscribers", "Active Users"], 
+    //     }, 
+    //     options: { 
+    //       responsive: true, 
+    //       maintainAspectRatio: false,
+    //       cutout: '70%',  // This creates the doughnut hole (for Chart.js v3+)
+    //       cutoutPercentage: 70, // For Chart.js v2 (fallback)
+    //       legend: { 
+    //         position: 'bottom', 
+    //         labels: { 
+    //             fontColor: "rgb(154, 154, 154)", 
+    //             fontSize: 11, 
+    //             usePointStyle: true, 
+    //             padding: 20, 
+    //         }, 
+    //       }, 
+    //       pieceLabel: { 
+    //         render: 'percentage', 
+    //         fontColor: "white", 
+    //         fontSize: 14, 
+    //       }, 
+    //       tooltips: {
+    //         callbacks: {
+    //           label: function(tooltipItem, data) {
+    //             var dataset = data.datasets[tooltipItem.datasetIndex];
+    //             var label = data.labels[tooltipItem.index];
+    //             var value = dataset.data[tooltipItem.index];
+    //             return label + ": " + value;
+    //           }
+    //         }
+    //       }, 
+    //       layout: { 
+    //         padding: {left: 20, right: 20, top: 20, bottom: 20}, 
+    //       }, 
+    //     }, 
     // });
 
     var myRadarChart = new Chart(radarChart, {
@@ -566,16 +612,15 @@
     }
 
     function loadChartData() {
-       // pieChart
-       fetch("/chart/")  // Fix the URL
+        // pieChart
+        fetch("/severity/")
             .then(response => response.json())
             .then((data) => {
                 var severityLevels = Object.keys(data);
                 var counts = Object.values(data);
                 var pieChart = document.getElementById("pieChart").getContext("2d");
-
+            
                 console.log("call");
-
                 new Chart(pieChart, {
                     type: "pie",
                     data: {
@@ -583,11 +628,10 @@
                         datasets: [
                             {
                                 data: counts,
-                                backgroundColor: ["#1d7af3", "#f3545d", "#daf4b"],
+                                backgroundColor: ["#1d7af3", "#f3545d", "#fdaf4b"],
                                 borderWidth: 0,
-                            },
+                            }
                         ],
-                        labels: severityLevels,
                     },
                     options: {
                         responsive: true,
@@ -595,28 +639,81 @@
                         legend: {
                             position: "bottom",
                             labels: {
-                                fontColor: "rgb(154, 154,154)",
+                                fontColor: "rgb(154, 154, 154)",
                                 fontSize: 11,
                                 usePointStyle: true,
                                 padding: 20,
-                            },
-                        },
-                        pieceLabel: {
-                            render: "percentage",
-                            fontColor: "white",
-                            fontSize: 14, 
+                            }
                         },
                         tooltips: false,
                         layout: {
-                            padding: {left: 20, right: 20, top: 20, bottom: 20},
-                        },
-                    },
+                            padding: {left: 20, right: 20, top: 20, bottom: 20}
+                        }
+                    }
                 });
             })
             .catch((error) => console.error("Error:", error));
-        }
-        
-        // Call the function when the page loads
-        loadChartData();
+    
+
+    // 5. Add JavaScript for the Line Chart
+    
+    fetch("/linechart/")
+        .then(response => response.json())
+        .then((data) => {
+            var months = Object.keys(data);
+            var counts = Object.values(data);
+            var lineChart = document.getElementById("lineChart").getContext("2d");
+            
+            new Chart(lineChart, {
+                type: "line",
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: "Active Users",
+                            borderColor: "#1d7af3",
+                            pointBorderColor: "#FFF",
+                            pointBackgroundColor: "#1d7af3",
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 4,
+                            pointHoverBorderWidth: 1,
+                            pointRadius: 4,
+                            backgroundColor: "transparent",
+                            fill: true,
+                            borderWidth: 2,
+                            data: counts
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            padding: 10,
+                            fontColor: "#1d7af3",
+                        }
+                    },
+                    tooltips: {
+                        bodySpacing: 4,
+                        mode: "nearest",
+                        intersect: 0,
+                        position: "nearest",
+                        xPadding: 10,
+                        yPadding: 10,
+                        caretPadding: 10
+                    },
+                    layout: {
+                        padding: { left: 15, right: 15, top: 15, bottom: 15 }
+                    }
+                }
+            });
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+    
+    // Call the function when the page loads
+    document.addEventListener('DOMContentLoaded', loadChartData);
 </script>
 {% endblock %}
