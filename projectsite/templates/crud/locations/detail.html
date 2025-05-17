@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Location Details</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'location_list' %}">Locations</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Location Details</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">{{ location.name }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <p class="form-control-static">{{ location.name }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <p class="form-control-static">{{ location.address }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <p class="form-control-static">{{ location.city }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <p class="form-control-static">{{ location.country }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="latitude">Latitude</label>
+                                <p class="form-control-static">{{ location.latitude }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude</label>
+                                <p class="form-control-static">{{ location.longitude }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="type">Location Type</label>
+                                <p class="form-control-static">{{ location.type }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a href="{% url 'location_update' location.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'location_list' %}" class="btn btn-danger">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
