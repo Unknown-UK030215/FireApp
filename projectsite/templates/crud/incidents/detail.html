@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Incident Details</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'incident_list' %}">Incidents</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Incident Details</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Incident #{{ incident.id }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <p class="form-control-static">{{ incident.location.name }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Date</label>
+                                <p class="form-control-static">{{ incident.date }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="time">Time</label>
+                                <p class="form-control-static">{{ incident.time }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="type">Incident Type</label>
+                                <p class="form-control-static">{{ incident.type }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="severity">Severity</label>
+                                <p class="form-control-static">{{ incident.severity }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <p class="form-control-static">{{ incident.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a href="{% url 'incident_update' incident.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'incident_list' %}" class="btn btn-danger">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
