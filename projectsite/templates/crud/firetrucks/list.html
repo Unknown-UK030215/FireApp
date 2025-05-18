@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">{{ title }}</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Fire Trucks</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title">Fire Trucks List</h4>
+                        <a href="{% url 'firetruck_create' %}" class="btn btn-primary btn-round ml-auto">
+                            <i class="fa fa-plus"></i>
+                            Add Fire Truck
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="basic-datatables" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Truck Number</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Station</th>
+                                    <th style="width: 10%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for firetruck in firetrucks %}
+                                <tr>
+                                    <td>{{ firetruck.truck_number }}</td>
+                                    <td>{{ firetruck.type }}</td>
+                                    <td>{{ firetruck.capacity }}</td>
+                                    <td>{{ firetruck.station }}</td>
+                                    <td>
+                                        <div class="form-button-action">
+                                            <a href="{% url 'firetruck_detail' firetruck.id %}" class="btn btn-link btn-primary btn-lg">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'firetruck_update' firetruck.id %}" class="btn btn-link btn-primary btn-lg">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'firetruck_delete' firetruck.id %}" class="btn btn-link btn-danger btn-lg" onclick="return confirm('Are you sure you want to delete this fire truck?');">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#basic-datatables').DataTable({});
+    });
+</script>
+{% endblock %}

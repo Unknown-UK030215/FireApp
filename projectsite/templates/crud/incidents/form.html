@@ -41,7 +41,9 @@
                                     <label for="location">Location</label>
                                     <select class="form-control" id="location" name="location" required>
                                         {% for location in locations %}
-                                            <option value="{{ location.id }}" {% if incident.location.id == location.id %}selected{% endif %}>{{ location.name }}</option>
+                                            <option value="{{ location.id }}" {% if incident.location.id == location.id %}selected{% endif %}>
+                                                {{ location.address }} - {{ location.city }}, {{ location.country }}
+                                            </option>
                                         {% endfor %}
                                     </select>
                                 </div>
