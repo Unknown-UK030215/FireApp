@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Station Details</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'station_list' %}">Fire Stations</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Station Details</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">{{ station.name }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <p class="form-control-static">{{ station.name }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <p class="form-control-static">{{ station.location.name }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <p class="form-control-static">{{ station.phone }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <p class="form-control-static">{{ station.email }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="capacity">Capacity</label>
+                                <p class="form-control-static">{{ station.capacity }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <p class="form-control-static">{{ station.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a href="{% url 'station_update' station.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'station_list' %}" class="btn btn-danger">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<div class="form-group">
+    <label for="location">Location</label>
+    <p class="form-control-static">{{ station.location.name }}</p>
+</div>
+<div class="form-group">
+    <label for="phone">Phone</label>
+    <p class="form-control-static">{{ station.phone }}</p>
+</div>
+<div class="form-group">
+    <label for="email">Email</label>
+    <p class="form-control-static">{{ station.email }}</p>
+</div>
+<div class="form-group">
+    <label for="capacity">Capacity</label>
+    <p class="form-control-static">{{ station.capacity }}</p>
+</div>
+<div class="form-group">
+    <label for="description">Description</label>
+    <p class="form-control-static">{{ station.description }}</p>
+</div>
+<div class="card-action">
+    <a href="{% url 'station_update' station.id %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'station_list' %}" class="btn btn-danger">Back to List</a>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

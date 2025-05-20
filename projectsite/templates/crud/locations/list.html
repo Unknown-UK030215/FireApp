@@ -26,7 +26,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Locations List</h4>
-                        <a href="#" class="btn btn-primary btn-round ml-auto">
+                        <a href="{% url 'location_create' %}" class="btn btn-primary btn-round ml-auto">
                             <i class="fa fa-plus"></i>
                             Add Location
                         </a>
@@ -55,11 +55,12 @@
                                     <td>{{ location.latitude }}, {{ location.longitude }}</td>
                                     <td>
                                         <div class="form-button-action">
-                                            <a href="{% url 'location_detail' location.id %}" class="btn btn-link btn-primary btn-lg">
-                                                <i class="fa fa-eye"></i>
                                             </a>
                                             <a href="{% url 'location_update' location.id %}" class="btn btn-link btn-primary btn-lg">
                                                 <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'location_delete' location.id %}" class="btn btn-link btn-danger btn-lg" onclick="return confirm('Are you sure you want to delete this location?');">
+                                                <i class="fa fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
