@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Fire Truck Details</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'firetruck_list' %}">Fire Trucks</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Fire Truck Details</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Fire Truck #{{ firetruck.truck_number }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="truck_number">Truck Number</label>
+                                <p class="form-control-static">{{ firetruck.truck_number }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="type">Type</label>
+                                <p class="form-control-static">{{ firetruck.type }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="capacity">Capacity</label>
+                                <p class="form-control-static">{{ firetruck.capacity }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="station">Station</label>
+                                <p class="form-control-static">{{ firetruck.station.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action">
+                        <a href="{% url 'firetruck_update' firetruck.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'firetruck_list' %}" class="btn btn-danger">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
