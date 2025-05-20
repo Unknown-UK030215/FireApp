@@ -1,14 +1,16 @@
 from itertools import count
 from django.db.models.fields import return_None
-from django.shortcuts import render
-from django.views.generic.list import ListView
-from fire.models import Locations, Incident, FireStation
+from django.shortcuts import render, redirect, get_object_or_404  # Add get_object_or_404 here
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from fire.models import Locations, Incident, FireStation, Firefighters, FireTruck, WeatherConditions
 from django.db import connection
 from django.http import JsonResponse
 from datetime import datetime
 from django.db.models import Count
 from django.db.models.functions import ExtractMonth
 import json
+from .models import WeatherConditions
+from django.contrib import messages
 
 
 class HomePageView(ListView):
@@ -80,16 +82,48 @@ def LineCountbyMonth(request):
 
 
 def map_station(request):
-    fire_stations = FireStation.objects.values('name', 'latitude', 'longitude')
-
-    for fs in fire_stations:
-        fs['latitude'] = float(fs['latitude'])
-        fs['longitude'] = float(fs['longitude'])
-
-    context = {
-        'fire_station': fire_stations,  
-    }
-    return render(request, 'map_station.html', context)
+    fire_stations = FireStation.objects.all()
+    station_list = []
+    
+    for station in fire_stations:
+        station_list.append({
+            'name': station.name,
+            'latitude': float(station.latitude) if station.latitude else 0,
+            'longitude': float(station.longitude) if station.longitude else 0,
+            'address': station.address,
+            'city': station.city,
+            'country': station.country
+        })
+    
+    # Check if a specific component is requested
+    path = request.path.split('/')
+    if len(path) > 3 and 'components' in path:
+        # Get the component name (remove .html extension if present)
+        component_index = path.index('components') + 1
+        if component_index < len(path):
+            component = path[component_index].split('.')[0]  # Remove .html extension
+            
+            # Handle specific components
+            if component == 'base':
+                # This will show the CRUD entities instead of avatars/buttons
+                return render(request, 'components/base.html')
+            elif component == 'locations':
+                return render(request, 'crud/locations/list.html', {'locations': Locations.objects.all(), 'title': 'Locations'})
+            elif component == 'incident':
+                return render(request, 'crud/incidents/list.html', {'incidents': Incident.objects.all(), 'title': 'Incidents'})
+            elif component == 'fire-station':
+                return render(request, 'crud/stations/list.html', {'stations': FireStation.objects.all(), 'title': 'Fire Stations'})
+            elif component == 'fire-fighter':
+                return render(request, 'crud/firefighters/list.html', {'firefighters': FireFighter.objects.all(), 'title': 'Fire Fighters'})
+            elif component == 'fire-truck':
+                return render(request, 'crud/firetrucks/list.html', {'firetrucks': FireTruck.objects.all(), 'title': 'Fire Trucks'})
+            elif component == 'weather-condition':
+                return render(request, 'crud/weather/list.html', {'weather_conditions': WeatherCondition.objects.all(), 'title': 'Weather Conditions'})
+            else:
+                # For any other component
+                return render(request, f'components/{component}.html', {'stations': json.dumps(station_list)})
+    
+    return render(request, 'maps/map_station.html', {'stations': json.dumps(station_list)})
 
 
 def monthly_incidents(request):
@@ -289,3 +323,385 @@ def MultipleBarbySeverity(request):
         result[severity] = dict(sorted(result[severity].items()))
     
     return JsonResponse(result)
+
+
+# CRUD Views for Locations
+class LocationListView(ListView):
+    model = Locations
+    template_name = 'crud/locations/list.html'
+    context_object_name = 'locations'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Locations List'
+        return context
+    
+    
+
+class LocationCreateView(CreateView):
+    model = Locations
+    template_name = 'crud/locations/form.html'
+    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude']
+    success_url = '/locations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add New Location'
+        return context
+    
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Location added successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the location.')
+        return super().form_invalid(form)
+
+        
+
+class LocationUpdateView(UpdateView):
+    model = Locations
+    template_name = 'crud/locations/form.html'
+    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude']
+    success_url = '/locations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Location: {self.object.name}'
+        return context
+
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Location updated successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the location.')
+        return super().form_invalid(form)
+
+class LocationDeleteView(DeleteView):
+    model = Locations
+    template_name = 'crud/locations/delete.html'
+    success_url = '/locations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Location: {self.object.name}'
+        return context
+    
+        
+    
+# CRUD Views for Incidents
+class IncidentListView(ListView):
+    model = Incident
+    template_name = 'crud/incidents/list.html'
+    context_object_name = 'incidents'
+    ordering = ['-date_time']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fire Incidents List'
+        return context
+
+class IncidentCreateView(CreateView):
+    model = Incident
+    template_name = 'crud/incidents/form.html'
+    fields = ['location', 'severity_level', 'date_time', 'description']
+    success_url = '/incidents/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Report New Fire Incident'
+        context['locations'] = Locations.objects.all()
+        return context
+    
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Incident added successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the incident.')
+        return super().form_invalid(form)
+
+
+class IncidentUpdateView(UpdateView):
+    model = Incident
+    template_name = 'crud/incidents/form.html'
+    fields = ['location', 'severity_level', 'date_time', 'description']
+    success_url = '/incidents/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Incident: {self.object.id}'
+        context['locations'] = Locations.objects.all()
+        return context
+
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Incident updated successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the incident.')
+        return super().form_invalid(form)
+
+class IncidentDeleteView(DeleteView):
+    model = Incident
+    template_name = 'crud/incidents/delete.html'
+    success_url = '/incidents/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Incident: {self.object.id}'
+        return context
+
+# CRUD Views for Fire Stations
+class StationListView(ListView):
+    model = FireStation
+    template_name = 'crud/stations/list.html'
+    context_object_name = 'stations'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fire Stations List'
+        return context
+
+class StationCreateView(CreateView):
+    model = FireStation
+    template_name = 'crud/stations/form.html'
+    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude', 'phone', 'email']
+    success_url = '/stations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add New Fire Station'
+        return context
+
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Station added successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the Station.')
+        return super().form_invalid(form)
+
+class StationUpdateView(UpdateView):
+    model = FireStation
+    template_name = 'crud/stations/form.html'
+    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude', 'phone', 'email']
+    success_url = '/stations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Fire Station: {self.object.name}'
+        return context
+
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Station Updated successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the station.')
+        return super().form_invalid(form)
+
+class StationDeleteView(DeleteView):
+    model = FireStation
+    template_name = 'crud/stations/delete.html'
+    success_url = '/stations/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Fire Station: {self.object.name}'
+        return context
+
+# CRUD Views for Fire Fighters
+class FirefighterListView(ListView):
+    model = Firefighters
+    template_name = 'crud/firefighters/list.html'
+    context_object_name = 'firefighters'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fire Fighters List'
+        return context
+
+class FirefighterCreateView(CreateView):
+    model = Firefighters
+    template_name = 'crud/firefighters/form.html'
+    fields = ['name', 'badge_number', 'rank', 'station', 'phone', 'email']
+    success_url = '/firefighters/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add New Fire Fighter'
+        context['stations'] = FireStation.objects.all()
+        return context
+    
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Firefighter added successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the firefighter.')
+        return super().form_invalid(form)
+
+class FirefighterUpdateView(UpdateView):
+    model = Firefighters
+    template_name = 'crud/firefighters/form.html'
+    fields = ['name', 'badge_number', 'rank', 'station', 'phone', 'email']
+    success_url = '/firefighters/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Fire Fighter: {self.object.name}'
+        context['stations'] = FireStation.objects.all()
+        return context
+    
+    def form_valid(self, form):
+        reponse = super().form_valid(form)
+        messages.success(self.request, 'Firefighter updated successfully.')
+        return reponse
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the firefighter.')
+        return super().form_invalid(form)
+
+class FirefighterDeleteView(DeleteView):
+    model = Firefighters
+    template_name = 'crud/firefighters/delete.html'
+    success_url = '/firefighters/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Fire Fighter: {self.object.name}'
+        return context
+
+# CRUD Views for Fire Trucks
+class FireTruckListView(ListView):
+    model = FireTruck
+    template_name = 'crud/firetrucks/list.html'
+    context_object_name = 'firetrucks'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fire Trucks List'
+        return context
+
+class FireTruckCreateView(CreateView):
+    model = FireTruck
+    template_name = 'crud/firetrucks/form.html'
+    fields = ['vehicle_number', 'truck_type', 'capacity', 'station', 'status']
+    success_url = '/firetrucks/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add New Fire Truck'
+        context['stations'] = FireStation.objects.all()
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Fire Truck added successfully.')
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the fire truck.')
+        return super().form_invalid(form)
+
+class FireTruckUpdateView(UpdateView):
+    model = FireTruck
+    template_name = 'crud/firetrucks/form.html'
+    fields = ['vehicle_number', 'truck_type', 'capacity', 'station', 'status']
+    success_url = '/firetrucks/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Fire Truck: {self.object.vehicle_number}'
+        context['stations'] = FireStation.objects.all()
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Fire Truck updated successfully.')
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the fire truck.')
+        return super().form_invalid(form)
+
+class FireTruckDeleteView(DeleteView):
+    model = FireTruck
+    template_name = 'crud/firetrucks/delete.html'
+    success_url = '/firetrucks/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Fire Truck: {self.object.vehicle_number}'
+        return context
+
+# CRUD Views for Weather Conditions
+class WeatherConditionListView(ListView):
+    model = WeatherConditions
+    template_name = 'crud/weather/list.html'
+    context_object_name = 'weather_conditions'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Weather Conditions List'
+        return context
+
+class WeatherConditionCreateView(CreateView):
+    model = WeatherConditions
+    template_name = 'crud/weather/form.html'
+    fields = ['temperature', 'humidity', 'wind_speed', 'date_time']
+    success_url = '/weather/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add New Weather Condition'
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Weather condition added successfully.')
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error adding the weather condition.')
+        return super().form_invalid(form)
+
+class WeatherConditionUpdateView(UpdateView):
+    model = WeatherConditions
+    template_name = 'crud/weather/form.html'
+    fields = ['temperature', 'humidity', 'wind_speed', 'date_time']
+    success_url = '/weather/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Edit Weather Condition: {self.object.id}'
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Weather condition updated successfully.')
+        return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the weather condition.')
+        return super().form_invalid(form)
+
+class WeatherConditionDeleteView(DeleteView):
+    model = WeatherConditions
+    template_name = 'crud/weather/delete.html'
+    success_url = '/weather/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Delete Weather Condition: {self.object.id}'
+        return context
+
