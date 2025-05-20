@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">{{ title }}</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'firetruck_list' %}">Fire Trucks</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">{{ title }}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">{{ title }}</div>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="truck_number">Truck Number</label>
+                                    <input type="text" class="form-control" id="truck_number" name="truck_number" value="{{ firetruck.truck_number }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type">Type</label>
+                                    <input type="text" class="form-control" id="type" name="type" value="{{ firetruck.type }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="capacity">Capacity</label>
+                                    <input type="number" class="form-control" id="capacity" name="capacity" value="{{ firetruck.capacity }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="station">Station</label>
+                                    <select class="form-control" id="station" name="station" required>
+                                        {% for station in stations %}
+                                            <option value="{{ station.id }}" {% if firetruck.station.id == station.id %}selected{% endif %}>{{ station.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                            <a href="{% url 'firetruck_list' %}" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

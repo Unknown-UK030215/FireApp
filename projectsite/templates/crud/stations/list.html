@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">{{ title }}</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Stations</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title">Stations List</h4>
+                        <a href="{% url 'station_create' %}" class="btn btn-primary btn-round ml-auto">
+                            <i class="fa fa-plus"></i>
+                            Add Station
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="basic-datatables" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Contact Info</th>
+                                    <th>Capacity</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for station in stations %}
+                                <tr>
+                                    <td><strong>{{ station.name }}</strong></td>
+                                    <td>
+                                        <div class="location-details">
+                                            <strong>{{ station.location.address }}</strong><br>
+                                            {{ station.location.city }}, {{ station.location.country }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="contact-info">
+                                            <strong>{{ station.phone }}</strong><br>
+                                            <small>{{ station.email }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="capacity-info">
+                                            <strong>{{ station.capacity }}</strong> units
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="description-text">
+                                            {{ station.description|truncatechars:50 }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-button-action">
+                                            <a href="{% url 'station_update' station.id %}" class="btn btn-link btn-primary btn-lg" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'station_delete' station.id %}" class="btn btn-link btn-danger btn-lg" data-toggle="tooltip" title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#basic-datatables').DataTable({
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search stations..."
+            }
+        });
+        
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+{% endblock %}
+
+<style>
+    .form-button-action {
+        display: flex;
+        gap: 8px;
+    }
+    .form-button-action .btn-link {
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+    .location-details {
+        padding: 6px 10px;
+        border-radius: 4px;
+        background-color: #f1f5f9;
+        border: 1px solid #e2e8f0;
+    }
+    .location-details strong {
+        color: #2563eb;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .location-details small {
+        color: #64748b;
+        font-size: 13px;
+    }
+    .contact-info {
+        padding: 6px 10px;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+    }
+    .contact-info strong {
+        color: #1e293b;
+        font-size: 14px;
+        display: block;
+    }
+    .contact-info small {
+        color: #64748b;
+        font-size: 13px;
+    }
+    .capacity-info {
+        font-size: 14px;
+    }
+    .description-text {
+        color: #4a5568;
+        font-size: 14px;
+    }
+</style>
