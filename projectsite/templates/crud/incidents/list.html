@@ -26,7 +26,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center">
                         <h4 class="card-title">Incidents List</h4>
-                        <a href="#" class="btn btn-primary btn-round ml-auto">
+                        <a href="{% url 'incident_create' %}" class="btn btn-primary btn-round ml-auto">
                             <i class="fa fa-plus"></i>
                             Add Incident
                         </a>
@@ -48,18 +48,39 @@
                             <tbody>
                                 {% for incident in incidents %}
                                 <tr>
-                                    <td>{{ incident.date }}</td>
-                                    <td>{{ incident.location.name }}</td>
-                                    <td>{{ incident.severity }}</td>
-                                    <td>{{ incident.status }}</td>
+                                    <td><strong>{{ incident.date_time }}</strong></td>
+                                    <td>
+                                        <div class="location-details">
+                                            <strong>{{ incident.location.address }}</strong><br>
+                                            {{ incident.location.city }}, {{ incident.location.country }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if incident.severity_level == 'Minor Fire' %}badge-info
+                                            {% elif incident.severity_level == 'Moderate Fire' %}badge-warning
+                                            {% elif incident.severity_level == 'Major Fire' %}badge-danger{% endif %}">
+                                            {% if incident.severity_level == 'Minor Fire' %}
+                                                Minor
+                                            {% elif incident.severity_level == 'Moderate Fire' %}
+                                                Moderate
+                                            {% elif incident.severity_level == 'Major Fire' %}
+                                                Major
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if incident.status == 'Active' %}badge-danger{% elif incident.status == 'Resolved' %}badge-success{% else %}badge-secondary{% endif %}">
+                                            {{ incident.status }}
+                                        </span>
+                                    </td>
                                     <td>{{ incident.description }}</td>
                                     <td>
                                         <div class="form-button-action">
-                                            <a href="{% url 'incident_detail' incident.id %}" class="btn btn-link btn-primary btn-lg">
-                                                <i class="fa fa-eye"></i>
-                                            </a>
                                             <a href="{% url 'incident_update' incident.id %}" class="btn btn-link btn-primary btn-lg">
                                                 <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'incident_delete' incident.id %}" class="btn btn-link btn-danger btn-lg" onclick="return confirm('Are you sure you want to delete this incident?');">
+                                                <i class="fa fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
