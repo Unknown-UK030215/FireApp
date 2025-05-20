@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Weather Condition Details</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'weather_list' %}">Weather Conditions</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Weather Condition Details</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Weather Condition for Incident #{{ weather.incident.id }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="incident">Incident</label>
+                                <p class="form-control-static">{{ weather.incident.description }}</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="temperature">Temperature</label>
+                                <p class="form-control-static">{{ weather.temperature }}°C</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="humidity">Humidity</label>
+                                <p class="form-control-static">{{ weather.humidity }}%</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="wind_speed">Wind Speed</label>
+                                <p class="form-control-static">{{ weather.wind_speed }} km/h</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="weather_description">Weather Description</label>
+                                <p class="form-control-static">{{ weather.weather_description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-action">
+                    <a href="{% url 'weather_update' weather.id %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'weather_list' %}" class="btn btn-danger">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

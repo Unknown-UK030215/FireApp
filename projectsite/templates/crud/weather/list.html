@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">{{ title }}</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'home' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Weather Conditions</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title">Weather Conditions List</h4>
+                        <a href="{% url 'weather_create' %}" class="btn btn-primary btn-round ml-auto">
+                            <i class="fa fa-plus"></i>
+                            Add Weather Condition
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="basic-datatables" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Temperature</th>
+                                    <th>Humidity</th>
+                                    <th>Wind Speed</th>
+                                    <th style="width: 10%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for condition in weather_conditions %}
+                                <tr>
+                                    <td>{{ condition.date_time }}</td>
+                                    <td>{{ condition.temperature }}°C</td>
+                                    <td>{{ condition.humidity }}%</td>
+                                    <td>{{ condition.wind_speed }} km/h</td>
+                                    <td>
+                                        <div class="form-button-action">
+                                            <a href="{% url 'weather_update' condition.id %}" class="btn btn-link btn-primary btn-lg">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'weather_delete' condition.id %}" class="btn btn-link btn-danger btn-lg">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function() {
+        $('#basic-datatables').DataTable({});
+    });
+</script>
+{% endblock %}
