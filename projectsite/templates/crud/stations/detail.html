@@ -73,18 +73,31 @@
     </div>
 </div>
 {% endblock %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Station Name</label>
+            <p class="form-control-static">{{ station.name }}</p>
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <p class="form-control-static">{{ station.address }}</p>
+        </div>
+        <div class="form-group">
+            <label>City</label>
+            <p class="form-control-static">{{ station.city }}</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Country</label>
+            <p class="form-control-static">{{ station.country }}</p>
+        </div>
+    </div>
+</div>
 <div class="form-group">
     <label for="location">Location</label>
     <p class="form-control-static">{{ station.location.name }}</p>
-</div>
-<div class="form-group">
-    <label for="phone">Phone</label>
-    <p class="form-control-static">{{ station.phone }}</p>
-</div>
-<div class="form-group">
-    <label for="email">Email</label>
-    <p class="form-control-static">{{ station.email }}</p>
-</div>
 <div class="form-group">
     <label for="capacity">Capacity</label>
     <p class="form-control-static">{{ station.capacity }}</p>

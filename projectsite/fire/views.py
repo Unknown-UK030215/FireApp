@@ -105,7 +105,6 @@ def map_station(request):
             
             # Handle specific components
             if component == 'base':
-                # This will show the CRUD entities instead of avatars/buttons
                 return render(request, 'components/base.html')
             elif component == 'locations':
                 return render(request, 'crud/locations/list.html', {'locations': Locations.objects.all(), 'title': 'Locations'})
@@ -114,13 +113,12 @@ def map_station(request):
             elif component == 'fire-station':
                 return render(request, 'crud/stations/list.html', {'stations': FireStation.objects.all(), 'title': 'Fire Stations'})
             elif component == 'fire-fighter':
-                return render(request, 'crud/firefighters/list.html', {'firefighters': FireFighter.objects.all(), 'title': 'Fire Fighters'})
+                return render(request, 'crud/firefighters/list.html', {'firefighters': Firefighters.objects.all(), 'title': 'Fire Fighters'})
             elif component == 'fire-truck':
                 return render(request, 'crud/firetrucks/list.html', {'firetrucks': FireTruck.objects.all(), 'title': 'Fire Trucks'})
             elif component == 'weather-condition':
-                return render(request, 'crud/weather/list.html', {'weather_conditions': WeatherCondition.objects.all(), 'title': 'Weather Conditions'})
+                return render(request, 'crud/weather/list.html', {'weather_conditions': WeatherConditions.objects.all(), 'title': 'Weather Conditions'})
             else:
-                # For any other component
                 return render(request, f'components/{component}.html', {'stations': json.dumps(station_list)})
     
     return render(request, 'maps/map_station.html', {'stations': json.dumps(station_list)})
@@ -455,7 +453,6 @@ class IncidentDeleteView(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Delete Incident: {self.object.id}'
-        return context
 
 # CRUD Views for Fire Stations
 class StationListView(ListView):
@@ -471,27 +468,27 @@ class StationListView(ListView):
 class StationCreateView(CreateView):
     model = FireStation
     template_name = 'crud/stations/form.html'
-    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude', 'phone', 'email']
+    fields = ['name', 'address', 'city', 'country']
     success_url = '/stations/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Add New Fire Station'
         return context
-
+    
     def form_valid(self, form):
-        reponse = super().form_valid(form)
+        response = super().form_valid(form)
         messages.success(self.request, 'Station added successfully.')
-        return reponse
+        return response
 
     def form_invalid(self, form):
-        messages.error(self.request, 'There was an error adding the Station.')
+        messages.error(self.request, 'There was an error adding the station.')
         return super().form_invalid(form)
 
 class StationUpdateView(UpdateView):
     model = FireStation
     template_name = 'crud/stations/form.html'
-    fields = ['name', 'address', 'city', 'country', 'latitude', 'longitude', 'phone', 'email']
+    fields = ['name', 'address', 'city', 'country']
     success_url = '/stations/'
 
     def get_context_data(self, **kwargs):
@@ -500,9 +497,9 @@ class StationUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        reponse = super().form_valid(form)
-        messages.success(self.request, 'Station Updated successfully.')
-        return reponse
+        response = super().form_valid(form)
+        messages.success(self.request, 'Station updated successfully.')
+        return response
 
     def form_invalid(self, form):
         messages.error(self.request, 'There was an error updating the station.')
@@ -516,7 +513,6 @@ class StationDeleteView(DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Delete Fire Station: {self.object.name}'
-        return context
 
 # CRUD Views for Fire Fighters
 class FirefighterListView(ListView):
@@ -532,7 +528,7 @@ class FirefighterListView(ListView):
 class FirefighterCreateView(CreateView):
     model = Firefighters
     template_name = 'crud/firefighters/form.html'
-    fields = ['name', 'badge_number', 'rank', 'station', 'phone', 'email']
+    fields = ['name', 'badge_number', 'rank', 'station', 'phone', 'experience_level']
     success_url = '/firefighters/'
 
     def get_context_data(self, **kwargs):
@@ -540,7 +536,7 @@ class FirefighterCreateView(CreateView):
         context['title'] = 'Add New Fire Fighter'
         context['stations'] = FireStation.objects.all()
         return context
-    
+
     def form_valid(self, form):
         reponse = super().form_valid(form)
         messages.success(self.request, 'Firefighter added successfully.')
@@ -595,18 +591,18 @@ class FireTruckListView(ListView):
 class FireTruckCreateView(CreateView):
     model = FireTruck
     template_name = 'crud/firetrucks/form.html'
-    fields = ['vehicle_number', 'truck_type', 'capacity', 'station', 'status']
+    fields = ['truck_number', 'model', 'capacity', 'station']
     success_url = '/firetrucks/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Add New Fire Truck'
-        context['stations'] = FireStation.objects.all()
+        context['stations'] = FireStation.objects.all()  # Add stations to context
         return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Fire Truck added successfully.')
+        messages.success(self.request, 'Fire truck added successfully.')
         return response
 
     def form_invalid(self, form):
@@ -616,18 +612,18 @@ class FireTruckCreateView(CreateView):
 class FireTruckUpdateView(UpdateView):
     model = FireTruck
     template_name = 'crud/firetrucks/form.html'
-    fields = ['vehicle_number', 'truck_type', 'capacity', 'station', 'status']
+    fields = ['truck_number', 'model', 'capacity', 'station']
     success_url = '/firetrucks/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Edit Fire Truck: {self.object.vehicle_number}'
-        context['stations'] = FireStation.objects.all()
+        context['title'] = f'Edit Fire Truck: {self.object.truck_number}'
+        context['stations'] = FireStation.objects.all()  # Add stations to context
         return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Fire Truck updated successfully.')
+        messages.success(self.request, 'Fire truck updated successfully.')
         return response
 
     def form_invalid(self, form):
@@ -648,7 +644,7 @@ class FireTruckDeleteView(DeleteView):
 class WeatherConditionListView(ListView):
     model = WeatherConditions
     template_name = 'crud/weather/list.html'
-    context_object_name = 'weather_conditions'
+    context_object_name = 'weather_data'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -658,41 +654,45 @@ class WeatherConditionListView(ListView):
 class WeatherConditionCreateView(CreateView):
     model = WeatherConditions
     template_name = 'crud/weather/form.html'
-    fields = ['temperature', 'humidity', 'wind_speed', 'date_time']
+    fields = ['date', 'incident', 'temperature', 'humidity', 'wind_speed', 'weather_description']
     success_url = '/weather/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Add New Weather Condition'
+        context['title'] = 'Add New Weather Data'
+        context['incidents'] = Incident.objects.all()
+        context['stations'] = FireStation.objects.all()
         return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Weather condition added successfully.')
+        messages.success(self.request, 'Weather data added successfully.')
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, 'There was an error adding the weather condition.')
+        messages.error(self.request, 'There was an error adding weather data.')
         return super().form_invalid(form)
 
 class WeatherConditionUpdateView(UpdateView):
     model = WeatherConditions
     template_name = 'crud/weather/form.html'
-    fields = ['temperature', 'humidity', 'wind_speed', 'date_time']
+    fields = ['date', 'incident', 'temperature', 'humidity', 'wind_speed', 'weather_description']
     success_url = '/weather/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Edit Weather Condition: {self.object.id}'
+        context['title'] = f'Edit Weather Data: {self.object.id}'
+        context['incidents'] = Incident.objects.all()
+        context['stations'] = FireStation.objects.all()
         return context
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Weather condition updated successfully.')
+        messages.success(self.request, 'Weather data updated successfully.')
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, 'There was an error updating the weather condition.')
+        messages.error(self.request, 'There was an error updating weather data.')
         return super().form_invalid(form)
 
 class WeatherConditionDeleteView(DeleteView):
@@ -702,6 +702,26 @@ class WeatherConditionDeleteView(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Delete Weather Condition: {self.object.id}'
+        context['title'] = f'Delete Weather Data: {self.object.id}'
         return context
+
+
+def add_firefighter(request):
+    stations = FireStation.objects.all()
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        rank = request.POST.get('rank')
+        experience_level = request.POST.get('experience_level')
+        station_id = request.POST.get('station')
+        contact_info = request.POST.get('contact_info')
+        station = FireStation.objects.get(id=station_id)
+        firefighter = Firefighters.objects.create(
+            name=name,
+            rank=rank,
+            experience_level=experience_level,
+            station=station,
+            phone=contact_info  # or map to the correct field
+        )
+        return redirect('firefighter_list')
+    return render(request, 'crud/firefighters/form.html', {'stations': stations})
 

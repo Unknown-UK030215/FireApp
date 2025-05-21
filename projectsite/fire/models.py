@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 class BaseModel(models.Model):
@@ -34,6 +35,7 @@ class Incident(BaseModel):
 
 class FireStation(BaseModel):
     name = models.CharField(max_length=150)
+    location = models.ForeignKey(Locations, on_delete=models.CASCADE, null=True, blank=True)  # Allow nulls for migration
     latitude = models.DecimalField(
         max_digits=22, decimal_places=16, null=True, blank=True)
     longitude = models.DecimalField(
@@ -41,6 +43,7 @@ class FireStation(BaseModel):
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=150)
     country = models.CharField(max_length=150)
+
 
 
 class Firefighters(BaseModel):
@@ -54,9 +57,15 @@ class Firefighters(BaseModel):
         ('Battalion Chief', 'Battalion Chief'),
     )
     name = models.CharField(max_length=150)
-    rank = models.CharField(max_length=150)
-    experience_level = models.CharField(max_length=45, choices=XP_CHOICES)
-    station = models.ForeignKey(FireStation, on_delete=models.CASCADE, null=True, blank=True)
+    badge_number = models.CharField(max_length=50, default='FF-0000')
+    rank = models.CharField(max_length=150, choices=XP_CHOICES)
+    station = models.ForeignKey(FireStation, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(default='default@example.com')
+    experience_level = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.name} - {self.rank}"
 
 
 class FireTruck(BaseModel):
@@ -67,6 +76,7 @@ class FireTruck(BaseModel):
 
 
 class WeatherConditions(BaseModel):
+    date = models.DateField()  # Use your desired default date
     incident = models.ForeignKey(Incident, on_delete=models.CASCADE)
     temperature = models.DecimalField(max_digits=10, decimal_places=2)
     humidity = models.DecimalField(max_digits=10, decimal_places=2)

@@ -38,36 +38,22 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ station.name }}" required>
+                                    <label for="name">Station Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ form.name.value|default:'' }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <select class="form-control" id="location" name="location" required>
-                                        {% for location in locations %}
-                                            <option value="{{ location.id }}" {% if incident.location.id == location.id %}selected{% endif %}>
-                                                {{ location.address }} - {{ location.city }}, {{ location.country }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{ form.address.value|default:'' }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="phone">Phone</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ station.phone }}">
+                                    <label for="city">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{ form.city.value|default:'' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ station.email }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="capacity">Capacity</label>
-                                    <input type="number" class="form-control" id="capacity" name="capacity" value="{{ station.capacity }}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" name="description" rows="3">{{ station.description }}</textarea>
+                                    <label for="country">Country</label>
+                                    <input type="text" class="form-control" id="country" name="country" value="{{ form.country.value|default:'' }}" required>
                                 </div>
                             </div>
                         </div>

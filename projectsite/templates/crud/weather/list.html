@@ -15,7 +15,7 @@
                 <i class="flaticon-right-arrow"></i>
             </li>
             <li class="nav-item">
-                <a href="#">Weather Conditions</a>
+                <a href="#">Weather Data</a>
             </li>
         </ul>
     </div>
@@ -25,10 +25,10 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex align-items-center">
-                        <h4 class="card-title">Weather Conditions List</h4>
+                        <h4 class="card-title">Weather Data List</h4>
                         <a href="{% url 'weather_create' %}" class="btn btn-primary btn-round ml-auto">
                             <i class="fa fa-plus"></i>
-                            Add Weather Condition
+                            Add Weather Data
                         </a>
                     </div>
                 </div>
@@ -37,26 +37,36 @@
                         <table id="basic-datatables" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>Date/Time</th>
+                                    <th>Date</th>
                                     <th>Temperature</th>
                                     <th>Humidity</th>
                                     <th>Wind Speed</th>
+                                    <th>Weather Description</th>
+                                    <th>Incident</th>
                                     <th style="width: 10%">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for condition in weather_conditions %}
+                                {% for weather in weather_data %}
                                 <tr>
-                                    <td>{{ condition.date_time }}</td>
-                                    <td>{{ condition.temperature }}°C</td>
-                                    <td>{{ condition.humidity }}%</td>
-                                    <td>{{ condition.wind_speed }} km/h</td>
+                                    <td>
+                                        {% if weather.date %}
+                                            {{ weather.date|date:'Y-m-d' }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ weather.temperature }}°C</td>
+                                    <td>{{ weather.humidity }}%</td>
+                                    <td>{{ weather.wind_speed }} km/h</td>
+                                    <td>{{ weather.weather_description }}</td>
+                                    <td>{{ weather.incident.description }}</td>
                                     <td>
                                         <div class="form-button-action">
-                                            <a href="{% url 'weather_update' condition.id %}" class="btn btn-link btn-primary btn-lg">
+                                            <a href="{% url 'weather_update' weather.id %}" class="btn btn-link btn-primary btn-lg">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="{% url 'weather_delete' condition.id %}" class="btn btn-link btn-danger btn-lg">
+                                            <a href="{% url 'weather_delete' weather.id %}" class="btn btn-link btn-danger btn-lg" onclick="return confirm('Are you sure you want to delete this weather data?');">
                                                 <i class="fa fa-trash"></i>
                                             </a>
                                         </div>

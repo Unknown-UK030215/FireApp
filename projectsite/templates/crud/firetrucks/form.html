@@ -42,8 +42,8 @@
                                     <input type="text" class="form-control" id="truck_number" name="truck_number" value="{{ firetruck.truck_number }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="type">Type</label>
-                                    <input type="text" class="form-control" id="type" name="type" value="{{ firetruck.type }}" required>
+                                    <label for="type">Model</label>
+                                    <input type="text" class="form-control" id="model" name="model" value="{{ firetruck.model }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -54,8 +54,9 @@
                                 <div class="form-group">
                                     <label for="station">Station</label>
                                     <select class="form-control" id="station" name="station" required>
+                                        <option value="">Select Station</option>
                                         {% for station in stations %}
-                                            <option value="{{ station.id }}" {% if firetruck.station.id == station.id %}selected{% endif %}>{{ station.name }}</option>
+                                        <option value="{{ station.id }}" {% if firetruck.station.id == station.id %}selected{% endif %}>{{ station.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

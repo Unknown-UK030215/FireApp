@@ -38,7 +38,7 @@
                             <thead>
                                 <tr>
                                     <th>Truck Number</th>
-                                    <th>Type</th>
+                                    <th>Model</th>
                                     <th>Capacity</th>
                                     <th>Station</th>
                                     <th style="width: 10%">Action</th>
@@ -48,9 +48,9 @@
                                 {% for firetruck in firetrucks %}
                                 <tr>
                                     <td>{{ firetruck.truck_number }}</td>
-                                    <td>{{ firetruck.type }}</td>
+                                    <td>{{ firetruck.model }}</td>
                                     <td>{{ firetruck.capacity }}</td>
-                                    <td>{{ firetruck.station }}</td>
+                                    <td>{{ firetruck.station.name }}</td>
                                     <td>
                                         <div class="form-button-action">
                                             <a href="{% url 'firetruck_update' firetruck.id %}" class="btn btn-link btn-primary btn-lg">

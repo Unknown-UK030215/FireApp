@@ -50,7 +50,7 @@
                                     <td>{{ firefighter.name }}</td>
                                     <td>{{ firefighter.rank }}</td>
                                     <td>{{ firefighter.experience_level }}</td>
-                                    <td>{{ firefighter.station }}</td>
+                                    <td>{{ firefighter.station.name }}</td>
                                     <td>
                                         <div class="form-button-action">
                                             <a href="{% url 'firefighter_update' firefighter.id %}" class="btn btn-link btn-primary btn-lg">

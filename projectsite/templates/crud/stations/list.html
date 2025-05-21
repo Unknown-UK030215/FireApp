@@ -38,39 +38,19 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Location</th>
-                                    <th>Contact Info</th>
-                                    <th>Capacity</th>
-                                    <th>Description</th>
+                                    <th>Address</th>
+                                    <th>City</th>
+                                    <th>Country</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for station in stations %}
                                 <tr>
-                                    <td><strong>{{ station.name }}</strong></td>
-                                    <td>
-                                        <div class="location-details">
-                                            <strong>{{ station.location.address }}</strong><br>
-                                            {{ station.location.city }}, {{ station.location.country }}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="contact-info">
-                                            <strong>{{ station.phone }}</strong><br>
-                                            <small>{{ station.email }}</small>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="capacity-info">
-                                            <strong>{{ station.capacity }}</strong> units
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="description-text">
-                                            {{ station.description|truncatechars:50 }}
-                                        </div>
-                                    </td>
+                                    <td><strong></strong>{{ station.name }}</strong></td>
+                                    <td>{{ station.address }}</td>
+                                    <td>{{ station.city }}</td>
+                                    <td>{{ station.country }}</td>
                                     <td>
                                         <div class="form-button-action">
                                             <a href="{% url 'station_update' station.id %}" class="btn btn-link btn-primary btn-lg" data-toggle="tooltip" title="Edit">

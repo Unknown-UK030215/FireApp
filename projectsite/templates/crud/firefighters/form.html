@@ -42,8 +42,21 @@
                                     <input type="text" class="form-control" id="name" name="name" value="{{ firefighter.name }}" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="badge_number">Badge Number</label>
+                                    <input type="text" class="form-control" id="badge_number" name="badge_number" value="{{ firefighter.badge_number }}" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="rank">Rank</label>
-                                    <input type="text" class="form-control" id="rank" name="rank" value="{{ firefighter.rank }}" required>
+                                    <select class="form-control" id="rank" name="rank" required>
+                                        <option value="">Select Rank</option>
+                                        <option value="Probationary Firefighter" {% if firefighter.rank == 'Probationary Firefighter' %}selected{% endif %}>Probationary Firefighter</option>
+                                        <option value="Firefighter I" {% if firefighter.rank == 'Firefighter I' %}selected{% endif %}>Firefighter I</option>
+                                        <option value="Firefighter II" {% if firefighter.rank == 'Firefighter II' %}selected{% endif %}>Firefighter II</option>
+                                        <option value="Firefighter III" {% if firefighter.rank == 'Firefighter III' %}selected{% endif %}>Firefighter III</option>
+                                        <option value="Driver" {% if firefighter.rank == 'Driver' %}selected{% endif %}>Driver</option>
+                                        <option value="Captain" {% if firefighter.rank == 'Captain' %}selected{% endif %}>Captain</option>
+                                        <option value="Battalion Chief" {% if firefighter.rank == 'Battalion Chief' %}selected{% endif %}>Battalion Chief</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="experience_level">Experience Level</label>
@@ -60,8 +73,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="contact_info">Contact Info</label>
-                                    <input type="text" class="form-control" id="contact_info" name="contact_info" value="{{ firefighter.contact_info }}">
+                                    <label for="phone">Phone</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ firefighter.phone }}">
                                 </div>
                             </div>
                         </div>
